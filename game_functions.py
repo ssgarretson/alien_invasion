@@ -121,7 +121,7 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
     
     # Check for any bullets that have hit aliens
     # If so, get rid of the bullet and the alien
-    collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
+    collisions = pygame.sprite.groupcollide(aliens, bullets, True, True)
 
     if collisions:
         for aliens in collisions.values():
@@ -159,7 +159,7 @@ def create_alien(ai_settings, screen, aliens, alien_number, row_number):
     alien = Alien(ai_settings, screen)
     alien_width = alien.rect.width
     alien.x = alien_width + 2 * alien_width * alien_number
-    alien.rect.x = alien.x
+    alien.rect.x = alien.x 
     alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
     aliens.add(alien)
 
