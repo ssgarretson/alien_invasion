@@ -18,7 +18,10 @@ class Settings():
         self.bullets_allowed = 5
 
         # Alien Settings
-        self.fleet_drop_speed = 50
+        self.fleet_drop_speed = 20
+
+        # Star Settings
+        self.star_number = 25
 
         # How quickly the gem speeds up
         self.speedup_scale = 1.1
@@ -30,9 +33,9 @@ class Settings():
     
     def initialize_dynamic_settings(self):
         """Initialize the game's dynamic settings"""
-        self.ship_speed_factor = 60.5
+        self.ship_speed_factor = 10
         self.bullet_speed_factor = 60
-        self.alien_speed_factor = 10
+        self.alien_speed_factor = 5
 
         # fleet_direction of 1 represents right; -1 represents left
         self.fleet_direction = 1

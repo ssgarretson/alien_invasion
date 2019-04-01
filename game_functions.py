@@ -3,8 +3,11 @@ import pygame
 from time import sleep
 from bullet import Bullet
 from alien import Alien
+from star import Star
+from random import randint
 
-def check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets):
+def check_events(ai_settings, screen, stats, sb, play_button, 
+            ship, aliens, bullets, stars):
     """Respond to keypresses and mouse events."""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -16,10 +19,10 @@ def check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, bull
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
             check_play_button(ai_settings, screen, stats, sb, play_button, ship, 
-                    aliens, bullets, mouse_x, mouse_y)
+                    aliens, bullets, stars, mouse_x, mouse_y)
 
 def check_play_button(ai_settings, screen, stats, sb, play_button, ship, 
-        aliens, bullets, mouse_x, mouse_y):
+        aliens, bullets, stars, mouse_x, mouse_y):
     """Start a new game when the player clicks play"""
     button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
     if button_clicked and not stats.game_active:
@@ -42,9 +45,11 @@ def check_play_button(ai_settings, screen, stats, sb, play_button, ship,
         # Empty the list of aliens and bullets
         aliens.empty()
         bullets.empty()
+        stars.empty()
 
         # Create a new fleet and center the ship
         create_fleet(ai_settings, screen, ship, aliens)
+        create_starfield(ai_settings, screen, stars)
         ship.center_ship()
 
 def check_keydown_events(event, ai_settings, screen, sb, ship, bullets):
@@ -67,10 +72,14 @@ def check_keyup_events(event, ship):
         ship.moving_left = False
 
 
-def update_screen(ai_settings, screen, stats, sb, ship, alien, bullets, play_button):
+def update_screen(ai_settings, screen, stats, sb, ship, alien, bullets, play_button, stars):
     """Update images on the screen and flip to the new screen"""
     # Redraw the screen during each pass through the loop
     screen.fill(ai_settings.bg_color)
+
+    # Draw a starfield
+    for star in stars:
+        star.blitme()
 
     # Redraw all bullets behind ship and aliens
     for bullet in bullets.sprites():
@@ -234,5 +243,14 @@ def check_high_score(stats, sb):
     if stats.score > stats.high_score:
         stats.high_score = stats.score
         sb.prep_high_score()
+
+def create_starfield(ai_settings, screen, stars):
+    """Create a field of stars"""
+    for star_number in range(0, ai_settings.star_number):
+        star = Star(ai_settings, screen)
+        star.rect.x = randint(0, 1218)
+        star.rect.y = randint(0, 800)
+        stars.add(star)
+        star_number += 1
 
     
