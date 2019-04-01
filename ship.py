@@ -45,6 +45,8 @@ class Ship(Sprite):
         # Update rect object from self.center
         self.rect.centerx = self.center
     
+    def update_ship_image(self, image):
+        self.image = pygame.image.load('images/{}.bmp'.format(image))
 
     def blitme(self):
         """Draw the ship at its current location"""

@@ -15,7 +15,7 @@ class Settings():
         self.bullet_width = 3
         self.bullet_height = 15
         self.bullet_color = 255, 50, 50
-        self.bullets_allowed = 3
+        self.bullets_allowed = 5
 
         # Alien Settings
         self.fleet_drop_speed = 50
@@ -32,7 +32,7 @@ class Settings():
         """Initialize the game's dynamic settings"""
         self.ship_speed_factor = 60.5
         self.bullet_speed_factor = 60
-        self.alien_speed_factor = 5
+        self.alien_speed_factor = 10
 
         # fleet_direction of 1 represents right; -1 represents left
         self.fleet_direction = 1

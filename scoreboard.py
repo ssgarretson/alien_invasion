@@ -14,7 +14,7 @@ class Scoreboard():
         self.stats = stats
 
         # Font settfings for scoring information
-        self.text_color = (30, 30, 30)
+        self.text_color = (255, 255, 255)
         self.font = pygame.font.SysFont(None, 48)
 
         # Prepare the initial score images
@@ -32,8 +32,8 @@ class Scoreboard():
         
         # Display the score at the top right of the screen
         self.score_rect = self.score_image.get_rect()
-        self.score_rect.right = self.screen_rect.right - 20
-        self.score_rect.top = 20
+        self.score_rect.right = self.screen_rect.right - 5
+        self.score_rect.top = 10
 
     def prep_high_score(self):
         """Turn the highscore into a rendered image"""
@@ -55,15 +55,16 @@ class Scoreboard():
         # Position the level below the score
         self.level_rect = self.level_image.get_rect()
         self.level_rect.right = self.score_rect.right
-        self.level_rect.top = self.score_rect.bottom + 10
+        self.level_rect.top = self.score_rect.bottom 
 
     def prep_ships(self):
         """Show how many ships are left"""
         self.ships = Group()
         for ship_number in range(self.stats.ships_left):
             ship = Ship(self.ai_settings, self.screen)
-            ship.rect.x = 10 + ship_number * ship.rect.width
+            ship.rect.x = ship_number * (ship.rect.width / 3)
             ship.rect.y = 10
+            ship.update_ship_image("lives")
             self.ships.add(ship)
 
     def show_score(self):
@@ -74,3 +75,10 @@ class Scoreboard():
         
         # Draw ships
         self.ships.draw(self.screen)
+
+    def update_highscore(self):
+        """Writes current highscore to a file"""
+        f = open("highscore.txt", "w")
+        high_score = int(round(self.stats.high_score, -1))
+        f.write(str(high_score))
+        f.close()
