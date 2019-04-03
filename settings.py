@@ -25,6 +25,7 @@ class Settings():
 
         # Asteroid Settings
         self.asteroid_number = 12
+        self.asteroid_level = 5
  
         # How quickly the gem speeds up
         self.speedup_scale = 1.1
@@ -37,7 +38,7 @@ class Settings():
     def initialize_dynamic_settings(self):
         """Initialize the game's dynamic settings"""
         self.ship_speed_factor = 10
-        self.bullet_speed_factor = 8
+        self.bullet_speed_factor = 15
         self.alien_speed_factor = 5
         self.star_speed_factor = 2
         self.asteroid_speed_factor = 13

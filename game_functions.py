@@ -1,14 +1,16 @@
 import sys
-import pygame
 from time import sleep
+from random import randint
+
+import pygame
+
 from bullet import Bullet
 from alien import Alien
 from star import Star
 from asteroid import Asteroid
-from random import randint
 
 def check_events(ai_settings, screen, stats, sb, play_button, 
-            ship, aliens, bullets, stars):
+                 ship, aliens, bullets, stars):
     """Respond to keypresses and mouse events."""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -23,7 +25,7 @@ def check_events(ai_settings, screen, stats, sb, play_button,
                     aliens, bullets, stars, mouse_x, mouse_y)
 
 def check_play_button(ai_settings, screen, stats, sb, play_button, ship, 
-        aliens, bullets, stars, mouse_x, mouse_y):
+                      aliens, bullets, stars, mouse_x, mouse_y):
     """Start a new game when the player clicks play"""
     button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
     if button_clicked and not stats.game_active:
@@ -87,7 +89,7 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, play_bu
         bullet.draw_bullet()
     ship.blitme()
     
-    if stats.level % 10 != 0:
+    if stats.level % ai_settings.asteroid_level != 0:
         aliens.draw(screen)
     else:
         asteroids.draw(screen)
@@ -135,7 +137,7 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
         check_high_score(stats, sb)
 
 
-    if len(aliens) == 0 and stats.level % 10 != 0:
+    if len(aliens) == 0 and stats.level % ai_settings.asteroid_level != 0:
         # If the entire fleet is destroyed, start a new level
         bullets.empty()
         ai_settings.increase_speed()
@@ -144,12 +146,12 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
         stats.level += 1
         sb.prep_level()
 
-        if stats.level % 10 != 0:
+        if stats.level % ai_settings.asteroid_level != 0:
             create_fleet(ai_settings, screen, ship, aliens)
         else:
             create_asteroidfield(ai_settings, screen, asteroids)
 
-def check_asteroid_ship_collisions(ai_settings, screen, stats, sb, ship, asteroids):
+def check_asteroid_ship_collisions(stats, sb, ship, asteroids):
     """Respond to asteroid-ship collisions"""
     # Check for any asteroids that have hit the ship
     # If so, player loses a life
@@ -284,7 +286,7 @@ def create_star(ai_settings, screen):
     star.rect.y = randint(-5, 805)
     return star
 
-def update_stars(ai_settings, screen, stars):
+def update_stars(ai_settings, stars):
     """Update the position of stars and get rid of old stars"""
     # Update star positions
     stars.update()
@@ -329,7 +331,7 @@ def update_asteroids(ai_settings, screen, stats, sb, ship, asteroids, aliens):
                 create_fleet(ai_settings, screen, ship, aliens)
     
     # Check for asteroid-ship collisions
-    check_asteroid_ship_collisions(ai_settings, screen, stats, sb, ship, asteroids)
+    check_asteroid_ship_collisions(stats, sb, ship, asteroids)
 
     
     

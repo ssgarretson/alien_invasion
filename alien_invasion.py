@@ -1,15 +1,16 @@
+"""Alien Invasion by Sam Garretson"""
 import pygame
 from pygame.sprite import Group
 from game_stats import GameStats
 from button import Button
 from scoreboard import Scoreboard
-from time import sleep
 
 from settings import Settings
 from ship import Ship
 import game_functions as gf
 
 def run_game():
+    """Run the game until the user quits"""
     # Initialize pygame, settings, and screen object
     pygame.init()
     ai_settings = Settings()
@@ -20,7 +21,7 @@ def run_game():
     # Make the Play button
     play_button = Button(ai_settings, screen, "Play")
 
-    # Create an instance to store game statistics and create a scoreboard 
+    # Create an instance to store game statistics and create a scoreboard
     stats = GameStats(ai_settings)
     sb = Scoreboard(ai_settings, screen, stats)
 
@@ -42,20 +43,19 @@ def run_game():
 
 # Start the main loop for the game
     while True:
-        
         gf.check_events(ai_settings, screen, stats, sb, play_button,
                         ship, aliens, bullets, stars)
-       
+
         if stats.game_active:
             ship.update()
             gf.update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets, asteroids)
-            gf.update_stars(ai_settings, screen, stars)
-            if stats.level % 10 != 0:
-                gf.update_aliens(ai_settings, screen, stats, sb, ship, aliens, bullets)  
-            elif stats.level % 10 == 0:  
+            gf.update_stars(ai_settings, stars)
+            if stats.level % ai_settings.asteroid_level != 0:
+                gf.update_aliens(ai_settings, screen, stats, sb, ship, aliens, bullets)
+            elif stats.level % ai_settings.asteroid_level == 0:
                 gf.update_asteroids(ai_settings, screen, stats, sb, ship, asteroids, aliens)
-       
-        gf.update_screen(ai_settings, screen, stats, sb, 
-                ship, aliens, bullets, play_button, stars, asteroids)
-        
+
+        gf.update_screen(ai_settings, screen, stats, sb,
+                         ship, aliens, bullets, play_button, stars, asteroids)
+
 run_game()
