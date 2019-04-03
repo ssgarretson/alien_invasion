@@ -13,7 +13,7 @@ class Settings():
 
         # Bullet Settings
         self.bullet_width = 3
-        self.bullet_height = 15
+        self.bullet_height = 20
         self.bullet_color = 255, 50, 50
         self.bullets_allowed = 5
 
@@ -22,6 +22,9 @@ class Settings():
 
         # Star Settings
         self.star_number = 25
+
+        # Asteroid Settings
+        self.asteroid_number = 12
  
         # How quickly the gem speeds up
         self.speedup_scale = 1.1
@@ -34,9 +37,10 @@ class Settings():
     def initialize_dynamic_settings(self):
         """Initialize the game's dynamic settings"""
         self.ship_speed_factor = 10
-        self.bullet_speed_factor = 10
+        self.bullet_speed_factor = 8
         self.alien_speed_factor = 5
         self.star_speed_factor = 2
+        self.asteroid_speed_factor = 13
 
         # fleet_direction of 1 represents right; -1 represents left
         self.fleet_direction = 1

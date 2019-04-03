@@ -4,6 +4,7 @@ from time import sleep
 from bullet import Bullet
 from alien import Alien
 from star import Star
+from asteroid import Asteroid
 from random import randint
 
 def check_events(ai_settings, screen, stats, sb, play_button, 
@@ -13,7 +14,7 @@ def check_events(ai_settings, screen, stats, sb, play_button,
         if event.type == pygame.QUIT:
             sys.exit()
         elif event.type == pygame.KEYDOWN:
-            check_keydown_events(event, ai_settings, screen, sb, ship, bullets)
+            check_keydown_events(event, ai_settings, screen, stats, sb, ship, bullets)
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship)
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -52,13 +53,13 @@ def check_play_button(ai_settings, screen, stats, sb, play_button, ship,
         create_starfield(ai_settings, screen, stars)
         ship.center_ship()
 
-def check_keydown_events(event, ai_settings, screen, sb, ship, bullets):
+def check_keydown_events(event, ai_settings, screen, stats, sb, ship, bullets):
     """Respond to keypresses"""
-    if event.key == pygame.K_RIGHT:
+    if event.key == pygame.K_RIGHT and stats.game_active:
         ship.moving_right = True
-    elif event.key == pygame.K_LEFT:
+    elif event.key == pygame.K_LEFT and stats.game_active:
         ship.moving_left = True
-    elif event.key == pygame.K_SPACE:
+    elif event.key == pygame.K_SPACE and stats.game_active:
         fire_bullets(ai_settings, screen, ship, bullets)
     elif event.key == pygame.K_q:
         sb.update_highscore()
@@ -72,7 +73,7 @@ def check_keyup_events(event, ship):
         ship.moving_left = False
 
 
-def update_screen(ai_settings, screen, stats, sb, ship, alien, bullets, play_button, stars):
+def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, play_button, stars, asteroids):
     """Update images on the screen and flip to the new screen"""
     # Redraw the screen during each pass through the loop
     screen.fill(ai_settings.bg_color)
@@ -85,7 +86,11 @@ def update_screen(ai_settings, screen, stats, sb, ship, alien, bullets, play_but
     for bullet in bullets.sprites():
         bullet.draw_bullet()
     ship.blitme()
-    alien.draw(screen)
+    
+    if stats.level % 10 != 0:
+        aliens.draw(screen)
+    else:
+        asteroids.draw(screen)
 
     # Draw the score information
     sb.show_score()
@@ -104,7 +109,7 @@ def fire_bullets(ai_settings, screen, ship, bullets):
         new_bullet = Bullet(ai_settings, screen, ship)
         bullets.add(new_bullet)
 
-def update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets):
+def update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets, asteroids):
     """Update the position of bullets and get rid of old bulelts"""
     # Update bullet positions
     bullets.update() 
@@ -114,9 +119,9 @@ def update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets):
         if bullet.rect.bottom <= 0:
             bullets.remove(bullet)
 
-    check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, bullets)
+    check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, bullets, asteroids)
 
-def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, bullets):
+def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, bullets, asteroids):
     """Respond to bullet-alien collisions"""
     
     # Check for any bullets that have hit aliens
@@ -130,7 +135,7 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
         check_high_score(stats, sb)
 
 
-    if len(aliens) == 0:
+    if len(aliens) == 0 and stats.level % 10 != 0:
         # If the entire fleet is destroyed, start a new level
         bullets.empty()
         ai_settings.increase_speed()
@@ -139,7 +144,26 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
         stats.level += 1
         sb.prep_level()
 
-        create_fleet(ai_settings, screen, ship, aliens)
+        if stats.level % 10 != 0:
+            create_fleet(ai_settings, screen, ship, aliens)
+        else:
+            create_asteroidfield(ai_settings, screen, asteroids)
+
+def check_asteroid_ship_collisions(ai_settings, screen, stats, sb, ship, asteroids):
+    """Respond to asteroid-ship collisions"""
+    # Check for any asteroids that have hit the ship
+    # If so, player loses a life
+    if pygame.sprite.spritecollide(ship, asteroids, True):
+        if stats.ships_left > 0:
+            # Decrement ships_left
+            stats.ships_left -= 1
+
+            # Update Scoreboard
+            sb.prep_ships()
+        else:
+            stats.game_active = False
+            pygame.mouse.set_visible(True)
+
 
 def get_number_aliens_x(ai_settings, alien_width):
     """Determine the number of aliens that fit in a row"""
@@ -268,8 +292,45 @@ def update_stars(ai_settings, screen, stars):
     # Replace Disappeaing Stars
     for star in stars.copy():
         if star.rect.y >= ai_settings.screen_height:
-            star.rect.y = -10
+            star.rect.y = randint(-20, -5)
             star.rect.x = randint(-5, 1223)
+
+def create_asteroidfield(ai_settings, screen, asteroids):
+    """Create a field of asteroids"""
+    for asteroid_number in range(0, ai_settings.asteroid_number):
+        asteroid = create_asteroid(ai_settings, screen)
+        asteroids.add(asteroid)
+        asteroid_number += 1
+    
+def create_asteroid(ai_settings, screen):
+    """Create a single Asteroid"""
+    asteroid = Asteroid(ai_settings, screen)
+    asteroid.rect.x = randint(-5, 1223)
+    asteroid.rect.y = randint(-1000, -10)
+    return asteroid
+
+def update_asteroids(ai_settings, screen, stats, sb, ship, asteroids, aliens):
+    """Update the position of asteroids and get rid of old Asteroids"""
+    # Update asteroid positions
+    asteroids.update()
+
+    for asteroid in asteroids.copy():
+        if asteroid.rect.bottom >= ai_settings.screen_height:
+            asteroids.remove(asteroid)
+            asteroids.add(create_asteroid(ai_settings, screen))
+            stats.asteroids_dodged += 1
+
+            # When the player has dodged 500 asteroids they pass the level
+            if stats.asteroids_dodged >= 50:
+                asteroids.empty()
+                stats.level += 1
+                sb.prep_level()
+                stats.asteroids_dodged = 0
+                create_fleet(ai_settings, screen, ship, aliens)
+    
+    # Check for asteroid-ship collisions
+    check_asteroid_ship_collisions(ai_settings, screen, stats, sb, ship, asteroids)
+
     
     
     

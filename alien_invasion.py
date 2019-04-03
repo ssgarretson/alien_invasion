@@ -3,6 +3,7 @@ from pygame.sprite import Group
 from game_stats import GameStats
 from button import Button
 from scoreboard import Scoreboard
+from time import sleep
 
 from settings import Settings
 from ship import Ship
@@ -28,6 +29,7 @@ def run_game():
     bullets = Group()
     aliens = Group()
     stars = Group()
+    asteroids = Group()
 
     # Create a Starfield for the Background
     gf.create_starfield(ai_settings, screen, stars)
@@ -35,18 +37,25 @@ def run_game():
     # Create the fleet of aliens
     gf.create_fleet(ai_settings, screen, ship, aliens)
 
-    # Start the main loop for the game
-    while True:
-        gf.check_events(ai_settings, screen, stats, sb, play_button,
-                 ship, aliens, bullets, stars)
+    # Create an Asteroid field
+    gf.create_asteroidfield(ai_settings, screen, asteroids)
 
+# Start the main loop for the game
+    while True:
+        
+        gf.check_events(ai_settings, screen, stats, sb, play_button,
+                        ship, aliens, bullets, stars)
+       
         if stats.game_active:
             ship.update()
-            gf.update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets)
-            gf.update_aliens(ai_settings, screen, stats, sb, ship, aliens, bullets)
+            gf.update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets, asteroids)
             gf.update_stars(ai_settings, screen, stars)
-            
+            if stats.level % 10 != 0:
+                gf.update_aliens(ai_settings, screen, stats, sb, ship, aliens, bullets)  
+            elif stats.level % 10 == 0:  
+                gf.update_asteroids(ai_settings, screen, stats, sb, ship, asteroids, aliens)
+       
         gf.update_screen(ai_settings, screen, stats, sb, 
-                ship, aliens, bullets, play_button, stars)
-
+                ship, aliens, bullets, play_button, stars, asteroids)
+        
 run_game()
