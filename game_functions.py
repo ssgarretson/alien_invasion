@@ -151,7 +151,7 @@ def get_number_rows(ai_settings, ship_height, alien_height):
     """Determine the number of rows of aliens that fit on the screen"""
     available_space_y = (ai_settings.screen_height - 
                         (3 * alien_height) - ship_height)
-    number_rows = int(available_space_y / (2 * alien_height))
+    number_rows = int(available_space_y / (2 * alien_height)) - 1
     return number_rows
 
 def create_alien(ai_settings, screen, aliens, alien_number, row_number):
@@ -242,15 +242,34 @@ def check_high_score(stats, sb):
     """Check to see if there's a new high score"""
     if stats.score > stats.high_score:
         stats.high_score = stats.score
+        sb.score_text_color = (255, 204, 0)
+        sb.prep_score()
         sb.prep_high_score()
 
 def create_starfield(ai_settings, screen, stars):
     """Create a field of stars"""
     for star_number in range(0, ai_settings.star_number):
-        star = Star(ai_settings, screen)
-        star.rect.x = randint(0, 1218)
-        star.rect.y = randint(0, 800)
+        star = create_star(ai_settings, screen)
         stars.add(star)
         star_number += 1
 
+def create_star(ai_settings, screen):
+    """Create a single star"""
+    star = Star(ai_settings, screen)
+    star.rect.x = randint(-5, 1223)
+    star.rect.y = randint(-5, 805)
+    return star
+
+def update_stars(ai_settings, screen, stars):
+    """Update the position of stars and get rid of old stars"""
+    # Update star positions
+    stars.update()
+
+    # Replace Disappeaing Stars
+    for star in stars.copy():
+        if star.rect.y >= ai_settings.screen_height:
+            star.rect.y = -10
+            star.rect.x = randint(-5, 1223)
+    
+    
     

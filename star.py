@@ -18,7 +18,16 @@ class Star(Sprite):
         self.rect.x = self.rect.width
         self.rect.y = self.rect.height
 
+        # Store the bullet's x, y positions as decimal values
         self.x = float(self.rect.x)
+        self.y = float(self.rect.y)
+
+        self.speed_factor = ai_settings.star_speed_factor
+
+    def update(self):
+        """Move the stars slowly down the Screen"""
+        # Update the decimal position of the star
+        self.rect.y += self.speed_factor
 
     def blitme(self):
         """Draw the star at its current location"""
