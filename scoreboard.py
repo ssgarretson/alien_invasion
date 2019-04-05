@@ -63,7 +63,7 @@ class Scoreboard():
         self.ships = Group()
         for ship_number in range(self.stats.ships_left):
             ship = Ship(self.ai_settings, self.screen)
-            ship.rect.x = ship_number * (ship.rect.width / 3)
+            ship.rect.x = ship_number * (ship.rect.width / 2)
             ship.rect.y = 10
             ship.update_ship_image("lives")
             self.ships.add(ship)

@@ -27,7 +27,7 @@ class Star(Sprite):
     def update(self):
         """Move the stars slowly down the Screen"""
         # Update the decimal position of the star
-        self.rect.y += self.speed_factor
+        self.rect.y += 5
 
     def blitme(self):
         """Draw the star at its current location"""

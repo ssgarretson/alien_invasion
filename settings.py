@@ -15,7 +15,7 @@ class Settings():
         self.bullet_width = 3
         self.bullet_height = 20
         self.bullet_color = 255, 50, 50
-        self.bullets_allowed = 5
+        self.bullets_allowed = 4
 
         # Alien Settings
         self.fleet_drop_speed = 20
@@ -27,7 +27,7 @@ class Settings():
         self.asteroid_number = 12
         self.asteroid_level = 5
  
-        # How quickly the gem speeds up
+        # How quickly the game speeds up
         self.speedup_scale = 1.1
 
         # How quickly the alien point values increase
