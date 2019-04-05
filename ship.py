@@ -44,6 +44,11 @@ class Ship(Sprite):
 
         # Update rect object from self.center
         self.rect.centerx = self.center
+
+        # Initialize the ships sounds
+        self.hit_sound = pygame.mixer.Sound("sounds/hit.wav")
+        self.asteroids_sound = pygame.mixer.Sound("sounds/asteroids.wav")
+ 
     
     def update_ship_image(self, image):
         self.image = pygame.image.load('images/{}.bmp'.format(image))
@@ -51,3 +56,7 @@ class Ship(Sprite):
     def blitme(self):
         """Draw the ship at its current location"""
         self.screen.blit(self.image, self.rect)
+
+    def hit(self):
+        """Make a hit sound when the ship is hit"""
+        pygame.mixer.Sound.play(self.hit_sound)

@@ -17,6 +17,7 @@ class Scoreboard():
         self.score_text_color = (255, 255, 255)
         self.level_text_color = (255, 255, 255)
         self.font = pygame.font.SysFont(None, 48)
+        self.new_highscore = False
 
         # Prepare the initial score images
         self.prep_score()
@@ -40,6 +41,7 @@ class Scoreboard():
         """Turn the highscore into a rendered image"""
         high_score = int(round(self.stats.high_score, -1))
         high_score_str = "{:,}".format(high_score)
+        self.high_score_sound = pygame.mixer.Sound("sounds/highscore.wav")
         self.high_score_image = self.font.render(high_score_str, True,
             self.score_text_color, self.ai_settings.bg_color)
         

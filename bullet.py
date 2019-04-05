@@ -20,6 +20,8 @@ class Bullet(Sprite):
 
         self.color = ai_settings.bullet_color
         self.speed_factor = ai_settings.bullet_speed_factor
+
+        self.fire_sound = pygame.mixer.Sound("sounds/pew.wav")
     
     def update(self):
         """Move the bullet up the screen"""
@@ -31,5 +33,10 @@ class Bullet(Sprite):
     def draw_bullet(self):
         """Draw the bullet to the screen"""
         pygame.draw.rect(self.screen, self.color, self.rect)
+    
+    def pew(self):
+        """Make a pew sound when the bullet is fired"""
+        pygame.mixer.Sound.play(self.fire_sound)
+
     
        

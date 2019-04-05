@@ -20,9 +20,12 @@ def run_game():
         (ai_settings.screen_width, ai_settings.screen_height))
     pygame.display.set_caption("Alien Invasion")
     
+    # Initialize the music
+    pygame.mixer.music.load("sounds/music.wav")
+
     # Make the Play button
     play_button = Button(ai_settings, screen, "Play")
-    play_button.prep_msg("Play")
+    play_button.prep_msg("Alien Invasion")
 
     # Create an instance to store game statistics and create a scoreboard
     stats = GameStats(ai_settings)
@@ -39,7 +42,7 @@ def run_game():
     gf.create_asteroidfield(ai_settings, screen, asteroids)
     gf.create_starfield(ai_settings, screen, stars)
     
-
+    pygame.mixer.music.play(-1)
 
     # Start the main loop for the game
     while True:

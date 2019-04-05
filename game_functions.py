@@ -103,6 +103,8 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, play_bu
     # Draw the play button if the game is inactive
     if not stats.game_active:
         play_button.draw_button()
+    else:
+        play_button.prep_msg("Play Again?")
 
     # Make the most recently drawn screen visible
     pygame.display.flip()
@@ -112,6 +114,7 @@ def fire_bullets(ai_settings, screen, ship, bullets):
     # Create a new bullet and add it to the bullets group
     if len(bullets) < ai_settings.bullets_allowed:
         new_bullet = Bullet(ai_settings, screen, ship)
+        new_bullet.pew()
         bullets.add(new_bullet)
 
 def update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets, asteroids):
@@ -158,6 +161,7 @@ def level_done(ai_settings, stats, screen, sb, ship, bullets, aliens, asteroids)
             create_fleet(ai_settings, screen, ship, aliens)
         else:
             ai_settings.bullets_allowed += 2
+            pygame.mixer.Sound.play(ship.asteroids_sound)
             create_asteroidfield(ai_settings, screen, asteroids)
 
 def get_number_aliens_x(ai_settings, alien_width):
@@ -217,6 +221,9 @@ def ship_hit(ai_settings, screen, stats, sb, ship, aliens, bullets):
         # Decrement ships_left
         stats.ships_left -= 1
 
+        # Play the hit sound
+        ship.hit()
+
         # Update Scoreboard
         sb.prep_ships()
 
@@ -261,10 +268,15 @@ def update_aliens(ai_settings, screen, stats, sb, ship, aliens, bullets):
 def check_high_score(stats, sb):
     """Check to see if there's a new high score"""
     if stats.score > stats.high_score:
+        # Play the new highscore noise and make the score gold
+        if not sb.new_highscore:
+            pygame.mixer.Sound.play(sb.high_score_sound)
+            sb.new_highscore = True
         stats.high_score = stats.score
         sb.score_text_color = (255, 204, 0)
         sb.prep_score()
         sb.prep_high_score()
+        sb.score_text_color = (255, 255, 255)
 
 def create_starfield(ai_settings, screen, stars):
     """Create a field of stars"""
@@ -313,6 +325,9 @@ def check_asteroid_ship_collisions(stats, sb, ship, asteroids):
         if stats.ships_left > 0:
             # Decrement ships_left
             stats.ships_left -= 1
+
+            # Play the hit sound
+            ship.hit()
 
             # Update Scoreboard
             sb.prep_ships()

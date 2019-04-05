@@ -26,7 +26,7 @@ class Settings():
         # Asteroid Settings
         self.asteroid_number = 12
         self.asteroid_level = 5
- 
+        
         # How quickly the game speeds up
         self.speedup_scale = 1.1
 
@@ -39,7 +39,7 @@ class Settings():
         """Initialize the game's dynamic settings"""
         self.ship_speed_factor = 10
         self.bullet_speed_factor = 15
-        self.alien_speed_factor = 5
+        self.alien_speed_factor = 10
         self.star_speed_factor = 2
         self.asteroid_speed_factor = 13
 
@@ -51,8 +51,10 @@ class Settings():
 
     def increase_speed(self):
         """Increase speed settings and alien point values"""
-        self.ship_speed_factor *= self.speedup_scale
-        self.bullet_speed_factor *= self.speedup_scale
+        if self.ship_speed_factor < 65:
+            self.ship_speed_factor *= self.speedup_scale
+        if self.bullet_speed_factor < 40:
+            self.bullet_speed_factor *= self.speedup_scale
         self.alien_speed_factor *= self.speedup_scale
         self.star_speed_factor *= self.speedup_scale
 

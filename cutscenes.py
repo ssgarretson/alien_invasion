@@ -20,6 +20,7 @@ def opening_cutscene(ai_settings, screen, sb, stars):
     warning_button = Button(ai_settings, screen, "DANGER AHEAD!!!")
     warning_button.button_color = (255, 0, 0)
     warning_button.prep_msg("DANGER AHEAD!!!")
+    warning_sound = pygame.mixer.Sound("sounds/warning.wav")
 
     warning = 0
     
@@ -33,7 +34,9 @@ def opening_cutscene(ai_settings, screen, sb, stars):
     
     playing = True
     alien_on_screen = True
-
+    
+    pygame.mixer.Sound.play(warning_sound, 1)
+    
     while playing:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -70,6 +73,7 @@ def opening_cutscene(ai_settings, screen, sb, stars):
         if warning % 25 < 13:
             warning_button.draw_button()
         warning += 1
+        
 
         # End the scene when the asteroids exit
         if len(asteroids) == 0:
